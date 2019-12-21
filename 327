@@ -1,0 +1,46 @@
+#include <U8glib.h>//使用OLED需要包含这个头文件
+#define INTERVAL_LCD 20 //定义OLED刷新时间间隔 
+unsigned long lcd_time = millis(); //OLED刷新时间计时器
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE); //设置OLED型号 
+//-------字体设置，大、中、小
+#define setFont_L u8g.setFont(u8g_font_7x13)
+#define setFont_M u8g.setFont(u8g_font_osb21)
+#define setFont_S u8g.setFont(u8g_font_fixed_v0r)
+#define setFont_SS u8g.setFont(u8g_font_04b_03bn)
+long SerialPrintFloatIeee754(float RealNumber)
+{
+long*  ArrayOfFourBytes;
+ArrayOfFourBytes =(long*)&RealNumber;
+//Serial.println(ArrayOfFourBytes[0],BIN);
+return ArrayOfFourBytes[0];
+}
+void setup() {
+ Serial.begin(9600);//初始化串口，定义波特率为9600baud
+ Serial.println("Initialisation complete.");//打印调试信息，双引号内可随意替换
+}
+void loop() {
+  u8g.firstPage();//u8glib规定的写法
+ do {
+ setFont_L;//选择字体
+ u8g.setPrintPos(0, 10);//选择位置
+ u8g.print("it's time to ");//打印字符串
+ u8g.setPrintPos(0, 30);
+u8g.print("take medicine.");
+ }while( u8g.nextPage() );//u8glib规定的写法
+}
+
+
+
+//蜂鸣器
+int pinBuzzer = 8; //管脚D8连接到蜂鸣器模块的信号脚
+void setup() {
+pinMode(pinBuzzer, OUTPUT); //设置pinBuzzer脚为输出状态
+}
+void loop() {
+long frequency = 600; //频率, 单位Hz
+//用tone()函数发出频率为frequency的波形
+tone(pinBuzzer, frequency );
+delay(100000); //等待1000毫秒
+noTone(pinBuzzer);//停止发声
+delay(300000); //等待2000毫秒
+}
